@@ -43,15 +43,21 @@
 #import "HZNativeAd.h"
 #import "HZNativeAdImage.h"
 
+#import "HZMediatedNativeAd.h"
+#import "HZMediatedNativeAdManager.h"
+#import "HZMediatedNativeAdViewRegisterer.h"
+
+#import "HZFetchOptions.h"
 #import "HZShowOptions.h"
 #import "HZBannerAd.h"
 #import "HZBannerAdOptions.h"
+#import "HZDemographics.h"
 
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"9.2.8"
+#define SDK_VERSION @"9.10.2"
 
 #if __has_feature(objc_modules)
 @import AdSupport;
@@ -60,12 +66,11 @@
 @import MediaPlayer;
 @import QuartzCore;
 @import StoreKit;
-@import iAd;
 @import MobileCoreServices;
 @import Security;
 @import SystemConfiguration;
-@import EventKit;
-@import EventKitUI;
+@import MessageUI;
+@import CoreLocation;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
@@ -90,9 +95,19 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
      */
     HZAdOptionsDisableMedation = 1 << 3, // 8
     /**
-     * Pass this to disable recording of In-App Purchase data
+     *  Pass this to disable recording of In-App Purchase data
      */
     HZAdOptionsDisableAutomaticIAPRecording = 1 << 4, // 16
+    
+    //placeholder for android flag value NATIVE_ADS_ONLY = 1 << 5 // 32
+    // (iOS does not (yet) use this option, but iOS and Android need to keep the same flag values for the sake of Unity, AIR, etc.)
+    
+    /**
+     *  Pass this flag to mark mediated ads as "child-directed". This value will be passed on to networks that support sending such an option (for purposes of the Children's Online Privacy Protection Act (COPPA)).
+     *  This value will be `OR`ed with our server-side (per mediated network) setting, so setting it on the server, here, or both will enable it.
+     *  Currently, only AdMob, Facebook Audience Network, and Heyzap Exchange are passed this information.
+     */
+    HZAdOptionsChildDirectedAds = 1 << 6, // 64
 };
 
 
@@ -106,10 +121,10 @@ extern NSString * const HZNetworkVungle;
 extern NSString * const HZNetworkChartboost;
 extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
-extern NSString * const HZNetworkIAd;
 extern NSString * const HZNetworkHyprMX;
 extern NSString * const HZNetworkHeyzapExchange;
 extern NSString * const HZNetworkLeadbolt;
+extern NSString * const HZNetworkInMobi;
 
 // General Network Callbacks
 extern NSString * const HZNetworkCallbackInitialized;
@@ -146,6 +161,36 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 
 // NSNotifications
 extern NSString * const HZRemoteDataRefreshedNotification;
+extern NSString * const HZMediationNetworkCallbackNotification;
+// HZAdsDelegate Callback NSNotifications
+extern NSString * const HZMediationDidShowAdNotification;
+extern NSString * const HZMediationDidFailToShowAdNotification;
+extern NSString * const HZMediationDidReceiveAdNotification;
+extern NSString * const HZMediationDidFailToReceiveAdNotification;
+extern NSString * const HZMediationDidClickAdNotification;
+extern NSString * const HZMediationDidHideAdNotification;
+extern NSString * const HZMediationWillStartAdAudioNotification;
+extern NSString * const HZMediationDidFinishAdAudioNotification;
+// HZIncentivizedAdDelegate Callback NSNotifications
+extern NSString * const HZMediationDidCompleteIncentivizedAdNotification;
+extern NSString * const HZMediationDidFailToCompleteIncentivizedAdNotification;
+
+// User Info Keys for the HZMediationNetworkCallbackNotification
+/**
+ *  The corresponding value is the name of the network callback being sent (see above constants for the possible values).
+ */
+extern NSString * const HZNetworkCallbackNameUserInfoKey;
+
+// User Info Keys for HZAdsDelegate and HZIncentivizedAdDelegate NSNotifications
+/**
+ *  The corresponding value is the ad tag of the ad a NSNotification is being sent about.
+ */
+extern NSString * const HZAdTagUserInfoKey;
+/**
+ *  The corresponding value is the name of the network providing the ad a NSNotification is being sent about, if applicable.
+ */
+extern NSString * const HZNetworkNameUserInfoKey;
+
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
@@ -289,10 +334,22 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 
 /**
  * Returns a dictionary of developer-settable data or an empty dictionary if no data is available.
- 
+ *
  * @note This data is cached, so it will usually be available at app launch. It is updated via a network call that is made when `[HeyzapAds startWithPublisherId:]` (or one of its related methods) is called. If you want to guarantee that the data has been refreshed, only use it after receiving an NSNotification with name=`HZRemoteDataRefreshedNotification`. The userInfo passed with the notification will be the same NSDictionary you can receive with this method call.
  */
 + (NSDictionary *) remoteData;
+
+/**
+ * Returns a string representation of the remote data dictionary. @see remoteData
+ */
++ (NSString *) getRemoteDataJsonString;
+
+/**
+ *  Returns an `HZDemographics` object that you can use to pass demographic information to third party SDKs.
+ *
+ *  @return An `HZDemographics` object. Guaranteed to be non-nil after starting the SDK.
+ */
++ (HZDemographics *)demographicInformation;
 
 /**
  * Presents a view controller that displays integration information and allows fetch/show testing
@@ -321,12 +378,6 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  *  @see pauseExpensiveWork
  */
 + (void)resumeExpensiveWork;
-
-/**
- * Returns a raw json string of developer-settable data or an empty json string if no data is available.
- * 
- */
-+ (NSString *) getRemoteDataJsonString;
 
 
 #pragma mark - Record IAP Transaction
