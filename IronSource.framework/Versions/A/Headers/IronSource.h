@@ -20,6 +20,8 @@
 #import "ISIntegrationHelper.h"
 #import "ISEventsReporting.h"
 #import "ISSupersonicAdsConfiguration.h"
+#import "ISSegment.h"
+#import "ISSegmentDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,6 +34,8 @@ typedef NS_ENUM(NSUInteger, ISBannerSize) {
     IS_AD_SIZE_BANNER = 0,
     IS_AD_SIZE_LARGE_BANNER = 1,
     IS_AD_SIZE_RECTANGLE_BANNER = 2,
+    IS_AD_SIZE_TABLET_BANNER = 3
+
 };
 
 @interface IronSource : NSObject
@@ -71,14 +75,6 @@ typedef NS_ENUM(NSUInteger, ISBannerSize) {
 + (void)shouldTrackReachability:(BOOL)flag;
 
 /**
- @abstract Sets a mediation segment.
- @discussion This method is used only for IronSource's SDK, and will be passed as a custom param.
-
- @param segment A segment name, which should not exceed 64 characters.
- */
-+ (void)setMediationSegment:(NSString *)segment;
-
-/**
  @abstract Sets if IronSource SDK should allow ad networks debug logs.
  @discussion This value will be passed to the supporting ad networks.
 
@@ -114,6 +110,29 @@ typedef NS_ENUM(NSUInteger, ISBannerSize) {
  @param mediationType a mediation type name. Should be alphanumeric and between 1-64 chars in length.
  */
 + (void)setMediationType:(NSString *)mediationType;
+
+/**
+ @abstract Sets a mediation segment.
+ @discussion This method is used only for IronSource's SDK, and will be passed as a custom param.
+ 
+ @param segment A segment name, which should not exceed 64 characters.
+ */
++ (void)setMediationSegment:(NSString *)segment;
+
+/**
+ @abstract Sets a segment.
+ @discussion This method is used to start a session with a spesific segment.
+ 
+ @param segment A segment object.
+ */
++ (void)setSegment:(ISSegment *)segment;
+
+/**
+ @abstract Sets the delegate for segment callback.
+ 
+ @param delegate The 'ISSegmentDelegate' for IronSource to send callbacks to.
+ */
++ (void)setSegmentDelegate:(id<ISSegmentDelegate>)delegate;
 
 #pragma mark - SDK Initialization
 
