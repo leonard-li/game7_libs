@@ -18,7 +18,6 @@ typedef NS_ENUM(NSInteger, ZZAdBannerSizeType){
     
 };
 
-
 @protocol ZZAdBannerViewDelegate;
 
 
