@@ -1,0 +1,6 @@
+framework module AvidlyAnalysisSDK {
+  umbrella header "AvidlyAnalysisSDK.h"
+
+  export *
+  module * { export * }
+}
