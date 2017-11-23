@@ -69,7 +69,6 @@ DU_CLASS_EXPORT DU_SUBCLASSING_RESTRICTED
  
  @abstract
  This is a method to initialize a DUNativeAd object matching the given placement id.
- Default CacheSize is 3
  
  @param placementID The id of the ad placement. You can create your placement id from Mobula developers page.
  */
@@ -120,6 +119,11 @@ DU_CLASS_EXPORT DU_SUBCLASSING_RESTRICTED
 - (void)registerViewForInteraction:(nonnull UIView *)view
                 withViewController:(nullable UIViewController *)viewController
                 withClickableViews:(nullable NSArray<UIView *> *)clickableViews;
+
+/**
+ This is a method to disconnect a DUNativeAd with the UIView you used to display the native ads.
+ */
+- (void)unregisterView;
 
 /*!
  @method

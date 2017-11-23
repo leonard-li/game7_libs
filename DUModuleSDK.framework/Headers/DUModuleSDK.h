@@ -23,3 +23,4 @@ FOUNDATION_EXPORT const unsigned char DUModuleSDKVersionString[];
 #import "DUAdNetwork.h"
 #import "DUMediaView.h"
 #import "DUAdChoicesView.h"
+#import "DUInterstitialAd.h"

@@ -9,8 +9,8 @@
 #ifndef DUAdConstants_h
 #define DUAdConstants_h
 
-#define DUSV @"1.0.2"
-#define DUSVN @"ios-1.0.2"
+#define DUSV @"1.0.5"
+#define DUSVN @"ios-1.0.5"
 
 typedef NS_OPTIONS(NSInteger, DUAdChannelType) {
     DUAdChannelTypeUnknow = 1 << 0,
