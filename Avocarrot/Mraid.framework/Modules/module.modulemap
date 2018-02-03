@@ -1,7 +1,0 @@
-framework module Mraid {
-  umbrella header "Mraid.h"
-  
-  export *
-  module * { export * }
-
-}

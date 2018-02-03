@@ -1,6 +1,0 @@
-framework module DUModuleSDK {
-  umbrella header "DUModuleSDK.h"
-
-  export *
-  module * { export * }
-}
