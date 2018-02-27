@@ -7,10 +7,13 @@
 //
 
 @interface ZZAdConfig : NSObject<NSCopying>
-
 /**
  appkey
  */
-@property(nonatomic,copy) NSString * appkey;
+@property (nonatomic, copy) NSString * appkey;
 
+/**
+ userId
+ */
+@property (nonatomic, copy) NSString *userId;
 @end

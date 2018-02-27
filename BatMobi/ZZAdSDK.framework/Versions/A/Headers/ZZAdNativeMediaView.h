@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ZZAdNativeMediaView : UIView
 
-@property(nonatomic,nullable)ZZAdNativeAd *nativeAd;
+@property(nonatomic,nullable,weak)ZZAdNativeAd *nativeAd;
 
 /**
  注意，设置了nativeAd之后，contentView才有值

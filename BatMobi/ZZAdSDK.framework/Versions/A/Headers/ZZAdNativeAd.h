@@ -1,7 +1,6 @@
 
-
 NS_ASSUME_NONNULL_BEGIN
-
+@class ZZAdNativeMediaView;
 @protocol ZZAdNativeAdDelegate;
 
 /**
@@ -12,6 +11,8 @@ typedef NS_ENUM(NSInteger, ZZADImageSizeType) {
     ZZADImageSize_320x200 = 0, //广告素材 320x200
     ZZADImageSize_1200x627 = 1, //广告素材 1200x627
 };
+
+
 
 /**
  The ZZAdNativeAd represents ad metadata to allow you to construct custom ad views.
@@ -55,21 +56,21 @@ typedef NS_ENUM(NSInteger, ZZADImageSizeType) {
 /**
  注册整个view里面的组件都是可以点击跳转广告的,注意,该api会移除view的tap手势识别
  
- @param view 广告视图
+ @param adMediaView 广告媒体视图
  @param viewController 不能为空,用来给SDK present viewcontroller
  */
-- (void)registerViewForInteraction:(UIView *)view
+- (void)registerViewForInteraction:(nonnull ZZAdNativeMediaView *)adMediaView
                 withViewController:(nonnull UIViewController *)viewController;
 
 
 /**
  注册广告视图哪些组件是可以点击跳转广告的,注意,该api会移除view和clickableViews的tap手势识别
  
- @param view 广告视图
+ @param adMediaView 广告媒体视图
  @param viewController 不能为空,用来给SDK present viewcontroller
  @param clickableViews 哪些子控件是可以被点击的
  */
-- (void)registerViewForInteraction:(UIView *)view
+- (void)registerViewForInteraction:(nonnull ZZAdNativeMediaView *)adMediaView
                 withViewController:(nonnull UIViewController *)viewController
                 withClickableViews:(nonnull NSArray<UIView *>*)clickableViews;
 

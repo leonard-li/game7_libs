@@ -23,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly,weak, nullable) UIButton *closeButton;//全屏网页的关闭按钮
 
+@property (nonatomic, assign) BOOL isReady;
+
+@property (nonatomic, assign) BOOL hasBeenUsed;
 
 - (instancetype)initWithPlacementID:(NSString *)placementID NS_DESIGNATED_INITIALIZER;
 
